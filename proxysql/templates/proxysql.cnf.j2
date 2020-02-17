@@ -1,0 +1,205 @@
+# {{ ansible_managed }}
+#file proxysql.cfg
+########################################################################################
+# This config file is parsed using libconfig , and its grammar is described in:        
+# http://www.hyperrealm.com/libconfig/libconfig_manual.html#Configuration-File-Grammar 
+# Grammar is also copied at the end of this file                                       
+########################################################################################
+########################################################################################
+# IMPORTANT INFORMATION REGARDING THIS CONFIGURATION FILE:                             
+########################################################################################
+# On startup, ProxySQL reads its config file (if present) to determine its datadir. 
+# What happens next depends on if the database file (disk) is present in the defined
+# datadir (i.e. "/var/lib/proxysql/proxysql.db").
+#
+# If the database file is found, ProxySQL initializes its in-memory configuration from 
+# the persisted on-disk database. So, disk configuration gets loaded into memory and 
+# then propagated towards the runtime configuration. 
+#
+# If the database file is not found and a config file exists, the config file is parsed 
+# and its content is loaded into the in-memory database, to then be both saved on-disk 
+# database and loaded at runtime.
+#
+# IMPORTANT: If a database file is found, the config file is NOT parsed. In this case
+#            ProxySQL initializes its in-memory configuration from the persisted on-disk
+#            database ONLY. In other words, the configuration found in the proxysql.cnf
+#            file is only used to initial the on-disk database read on the first startup.
+#
+# In order to FORCE a re-initialise of the on-disk database from the configuration file 
+# the ProxySQL service should be started with "service proxysql initial".
+#
+########################################################################################
+########################################################################################
+# Extra Docs
+########################################################################################
+# Original file:
+# https://github.com/sysown/proxysql/wiki/Configuration-file
+########################################################################################
+# Runtimes:
+# https://github.com/sysown/proxysql/wiki/Main-(runtime)
+########################################################################################
+# IMPORTANT:
+# The hostgroup of the clusters is distributed like this:
+# CLUSTER 1:
+# RO: {{ cluster0_hostgroup_ro }}
+# RW: {{ cluster0_hostgroup_rw }}
+#
+# CLUSTER 2:
+# RO: {{ cluster1_hostgroup_ro }}
+# RW: {{ cluster1_hostgroup_rw }}
+#
+# CLUSTER 3:
+# RO: {{ cluster2_hostgroup_ro }}
+# RW: {{ cluster2_hostgroup_rw }}
+#
+########################################################################################
+
+datadir="/var/lib/proxysql"
+errorlog="/var/lib/proxysql/proxysql.log"
+admin_variables=
+{
+    admin_credentials="{{ proxysql_user }}:{{ proxysql_password }};{{ proxysql_exporter_user }}:{{ proxysql_exporter_password }}"
+    mysql_ifaces="0.0.0.0:6032"
+#   debug=true
+}
+mysql_variables=
+{
+    threads=4
+    max_connections=150
+    default_query_delay=0
+    default_query_timeout=300000
+    have_compress=true
+    poll_timeout=2000
+    # interfaces="0.0.0.0:6033;/tmp/proxysql.sock"
+    interfaces="0.0.0.0:6033"
+    default_schema="information_schema"
+    stacksize=1048576
+    server_version="5.5.30"
+    connect_timeout_server=3000
+    connect_timeout_server_max=60000
+    monitor_username="{{ proxysql_monitor_username }}"
+    monitor_password="{{ proxysql_monitor_password }}" 
+    monitor_history=600000
+    monitor_connect_interval=60000
+    monitor_ping_interval=2000
+    monitor_read_only_interval=2000
+    monitor_read_only_timeout=500
+    ping_interval_server_msec=1000
+    ping_timeout_server=500
+    commands_stats=true
+    sessions_sort=true
+    connect_retries_on_failure=3
+    multiplexing=false
+    connection_max_age_ms=65000
+    max_transaction_time=60000
+}
+# defines all the MySQL servers
+mysql_servers =
+(
+    # Writer
+{% for key,value in proxysql_mysql_servers_writer.items() %}
+    {
+        address="{{ value['address'] }}"
+        hostgroup={{ value['hostgroup'] }}
+        port=3306
+        weight=1000
+        max_connections={{ value['max_connections'] }}
+    },
+{% endfor %}
+
+    # Reader
+{% for key,value in proxysql_mysql_servers_reader.items() %}
+    {
+        address="{{ value['address'] }}"
+        hostgroup={{ value['hostgroup'] }}
+        port=3306
+        weight=1000
+        max_connections={{ value['max_connections'] }}
+{% if loop.last %}
+    }
+        {% else %}
+    },
+    {% endif %}
+{% endfor %}
+)
+
+# defines all the MySQL users
+mysql_users:
+(
+{% for key,value in proxysql_mysql_users.items() %}
+
+    {
+        username="{{ value['username'] }}"
+        password="{{ value['password'] }}"
+        default_hostgroup={{ value['default_hostgroup'] }}
+        max_connections={{ value['max_connections'] }}
+        default_schema="{{ value['default_schema'] }}"
+        active=1
+        transaction_persistent=1
+    {% if loop.last %}
+    }
+        {% else %}
+    },
+    {% endif %}
+{% endfor %}
+)
+
+# defines MySQL Query Rules
+mysql_query_rules:
+(
+    # Select for updates queries will be sent to the WRITER hostgroup
+{% for key,value in proxysql_mysql_query_rules_writer.items() %}
+    {
+        rule_id={{ loop.index }}
+        active=1
+        match_digest="{{ value['match_digest'] }}"
+        destination_hostgroup={{ value['hostgroup'] }}
+        apply=1
+    },
+{% endfor %}
+    
+
+    # Select for updates queries will be sent to the READER hostgroup
+{% for key,value in proxysql_mysql_query_rules_reader.items() %}
+    {
+        rule_id={{ loop.index * 100 }}
+        active=1
+        match_digest="{{ value['match_digest'] }}"
+        destination_hostgroup={{ value['hostgroup'] }}
+        apply=1
+    },
+{% endfor %}
+
+    # Special rules
+{% for key,value in proxysql_mysql_special_rules.items() %}
+    {
+        rule_id={{ loop.index * 1000 }}
+        active=1
+        match_pattern="{{ value['match_pattern'] }}"
+        multiplex={{ value['multiplex'] }}
+    {% if loop.last %}
+    }
+        {% else %}
+    },
+    {% endif %}
+{% endfor %}
+)
+
+
+scheduler=()
+
+mysql_replication_hostgroups=
+(
+{% for key,value in proxysql_mysql_replication_hostgroups.items() %}
+    {
+        writer_hostgroup={{ value['writer_hostgroup'] }}
+        reader_hostgroup={{ value['reader_hostgroup'] }}
+        comment="{{ value['comment'] }}"
+        check_type="{{ value['check_type'] }}"
+    {% if loop.last %}
+    }
+        {% else %}
+    },
+    {% endif %}
+{% endfor %}
+)

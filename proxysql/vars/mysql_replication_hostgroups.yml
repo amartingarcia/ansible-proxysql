@@ -1,0 +1,16 @@
+proxysql_mysql_replication_hostgroups:
+  cluster0:
+    writer_hostgroup: "{{ cluster0_hostgroup_rw }}"
+    reader_hostgroup: "{{ cluster0_hostgroup_ro }}"
+    comment: aws-rds-instances
+    check_type: innodb_read_only
+#  cluster1:
+#    writer_hostgroup: "{{ cluster1_hostgroup_rw }}"
+#    reader_hostgroup: "{{ cluster1_hostgroup_ro }}"
+#    comment: aws-rds-instances
+#    check_type: innodb_read_only
+#  cluster2:
+#    writer_hostgroup: "{{ cluster2_hostgroup_rw }}"
+#    reader_hostgroup: "{{ cluster2_hostgroup_ro }}"
+#    comment: aws-rds-instances
+#    check_type: innodb_read_only

@@ -1,0 +1,10 @@
+proxysql_mysql_special_rules:
+  cluster0:
+    match_pattern: "/[*] keep_multiplexing_enabled [*]/$"
+    multiplex: 2
+#  cluster1:
+#    match_pattern: "/[*] keep_multiplexing_enabled [*]/$"
+#    multiplex: 2
+#  cluster1:
+#    match_pattern: "/[*] keep_multiplexing_enabled [*]/$"
+#    multiplex: 2

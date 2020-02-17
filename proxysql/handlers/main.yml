@@ -1,0 +1,13 @@
+---
+# handlers file for proxysql
+- name: "Delete ProxySQL.db"
+  file:
+    state: absent
+    path: /var/lib/proxysql/proxysql.db
+
+- name: "Restart ProxySQL service"
+  systemd:
+    name: proxysql
+    state: restarted
+    enabled: yes
+...

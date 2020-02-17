@@ -1,0 +1,19 @@
+proxysql_mysql_users:
+  user_cluster0:
+    username: root
+    password: "{{ vault_proxysql_mysql_users }}"
+    default_hostgroup: "{{ cluster0_hostgroup_rw }}"
+    max_connections: 150
+    default_schema: database
+#  user_cluster1:
+#    username: root
+#    password: "{{ vault_proxysql_mysql_users }}"
+#    default_hostgroup: "{{ cluster1_hostgroup_rw }}"
+#    max_connections: 150
+#    default_schema: database
+#  user_cluster2:
+#    username: root
+#    password: "{{ vault_proxysql_mysql_users }}"
+#    default_hostgroup: "{{ cluster2_hostgroup_rw }}"
+#    max_connections: 150
+#    default_schema: database

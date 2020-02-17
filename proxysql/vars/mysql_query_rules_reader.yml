@@ -1,0 +1,19 @@
+proxysql_mysql_query_rules_reader:
+  cluster0_1:
+    match_digest: "^SELECT"
+    hostgroup: "{{ cluster0_hostgroup_ro }}"
+  cluster0_2:
+    match_digest: "^\\( SELECT"
+    hostgroup: "{{ cluster0_hostgroup_ro }}"
+  cluster0_3:
+    match_digest: "^EXPLAIN \\( SELECT"
+    hostgroup: "{{ cluster0_hostgroup_ro }}"
+  cluster0_4:
+    match_digest: "^EXPLAIN SELECT"
+    hostgroup: "{{ cluster0_hostgroup_ro }}"
+#  cluster1:
+#    match_digest: "^SELECT"
+#    hostgroup: "{{ cluster1_hostgroup_ro }}"
+#  cluster2:
+#    match_digest: "^SELECT"
+#    hostgroup: "{{ cluster2_hostgroup_ro }}"

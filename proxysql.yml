@@ -1,0 +1,8 @@
+---
+- hosts: hosts
+  gather_facts: true
+  remote_user: admin
+  become: true
+  roles:
+    - proxysql
+...
