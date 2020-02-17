@@ -1,0 +1,25 @@
+---
+# tasks file for proxysql
+- name: "[PROXYSQL] Download version {{ proxysql_version }} file"
+  get_url:
+    url: https://github.com/sysown/proxysql/releases/download/v{{ proxysql_version }}/proxysql_{{ proxysql_version }}-debian{{ ansible_facts['lsb']['major_release'] }}_amd64.deb
+    dest: /tmp/proxysql-{{ proxysql_version }}.deb
+    mode: 640
+
+- name: "[PROXYSQL] Install version {{ proxysql_version }}"
+  apt:
+    deb: /tmp/proxysql-{{ proxysql_version }}.deb
+    state: present
+
+- name: "[PROXYSQL] Copy configuration to proxysql.cnf"
+  template:
+    src: proxysql.cnf.j2
+    dest: /etc/proxysql.cnf
+    owner: root
+    group: proxysql
+    mode: 0640
+  tags: config
+  notify: 
+    - Delete ProxySQL.db
+    - Restart ProxySQL service
+...

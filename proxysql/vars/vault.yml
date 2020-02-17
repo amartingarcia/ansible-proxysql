@@ -1,0 +1,6 @@
+---
+vault_proxysql_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+vault_proxysql_exporter_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+vault_proxysql_monitor_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+vault_proxysql_mysql_users: "{{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+...

@@ -1,0 +1,13 @@
+proxysql_mysql_servers_reader:
+  cluster0:
+    address: reader_endpoint
+    hostgroup: "{{ cluster0_hostgroup_ro }}"
+    max_connections: 150
+#  cluster1:
+#    address: rds-ro1.internal-predev.idsant.com
+#    hostgroup: "{{ cluster1_hostgroup_ro }}"
+#    max_connections: 150
+#  cluster2:
+#    address: rds-ro2.internal-predev.idsant.com
+#    hostgroup: "{{ cluster2_hostgroup_ro }}"
+#    max_connections: 150

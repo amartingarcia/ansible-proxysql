@@ -1,0 +1,10 @@
+proxysql_mysql_query_rules_writer:
+  cluster0:
+    match_digest: "^SELECT.*FOR UPDATE$"
+    hostgroup: "{{ cluster0_hostgroup_rw }}"
+#  cluster1:
+#    match_digest: "^SELECT.*FOR UPDATE$"
+#    hostgroup: "{{ cluster1_hostgroup_rw }}"
+#  cluster2:
+#    match_digest: "^SELECT.*FOR UPDATE$"
+#    hostgroup: "{{ cluster2_hostgroup_rw }}"

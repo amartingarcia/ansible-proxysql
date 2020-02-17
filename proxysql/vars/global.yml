@@ -1,0 +1,31 @@
+# Vars download ProxySQL file
+proxysql_version: 2.0.8
+
+# Vars ProxySQL file
+## admin_variables
+proxysql_user: admin
+proxysql_password: "{{ vault_proxysql_password }}"
+
+proxysql_exporter_user: exporter
+proxysql_exporter_password: "{{ vault_proxysql_exporter_password }}"
+
+## mysql_variables
+proxysql_monitor_username: root
+proxysql_monitor_password: "{{ vault_proxysql_monitor_password }}"
+
+## mysql_users
+proxysql_mysql_users_username: root
+proxysql_mysql_users_password: "{{ vault_proxysql_mysql_users }}"
+
+# Clusters
+## Cluster0
+cluster0_hostgroup_ro: 10
+cluster0_hostgroup_rw: 20
+
+### Cluster1
+cluster1_hostgroup_ro: 30
+cluster1_hostgroup_rw: 40
+
+### Cluster2
+cluster2_hostgroup_ro: 50
+cluster2_hostgroup_rw: 60

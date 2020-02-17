@@ -1,0 +1,13 @@
+proxysql_mysql_servers_writer:
+  cluster0:
+    address: writer_endpoint
+    hostgroup: "{{ cluster0_hostgroup_rw }}"
+    max_connections: 150
+#  cluster1:
+#    address: rds1.internal-predev.idsant.com
+#    hostgroup: "{{ cluster1_hostgroup_rw }}"
+#    max_connections: 150
+#  cluster2:
+#    address: rds2.internal-predev.idsant.com
+#    hostgroup: "{{ cluster2_hostgroup_rw }}"
+#    max_connections: 150
